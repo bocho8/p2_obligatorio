@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Proyecto ANT del Obligatorio 1 de Programacion 2.
+     Se puede compilar y ejecutar desde NetBeans o desde la linea de comandos
+     con "ant clean jar" y "ant run". -->
+<project name="Obligatorio1Murales" default="default" basedir=".">
+    <description>Compila, prueba y ejecuta el Obligatorio 1 de Programacion 2.</description>
+    <import file="nbproject/build-impl.xml"/>
+</project>
