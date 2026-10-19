@@ -53,24 +53,37 @@ public class Interfaz {
     }
 
     private void ejecutarOpcion(int opcion) {
-        if (opcion == 1) {
-            mostrarAutores();
-        } else if (opcion == 2) {
-            registrarDisenador();
-        } else if (opcion == 3) {
-            registrarFicha();
-        } else if (opcion == 4) {
-            crearMural();
-        } else if (opcion == 5) {
-            modificarMural();
-        } else if (opcion == 6) {
-            visualizarMural();
-        } else if (opcion == 7) {
-            listarDisenadores();
-        } else if (opcion == 8) {
-            compararMurales();
-        } else if (opcion == 9) {
-            visualizarFichas();
+        switch (opcion) {
+            case 1:
+                mostrarAutores();
+                break;
+            case 2:
+                registrarDisenador();
+                break;
+            case 3:
+                registrarFicha();
+                break;
+            case 4:
+                crearMural();
+                break;
+            case 5:
+                modificarMural();
+                break;
+            case 6:
+                visualizarMural();
+                break;
+            case 7:
+                listarDisenadores();
+                break;
+            case 8:
+                compararMurales();
+                break;
+            case 9:
+                visualizarFichas();
+                break;
+            default:
+                // La opcion 0 termina el programa.
+                break;
         }
     }
 
