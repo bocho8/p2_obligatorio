@@ -7,10 +7,6 @@ package murales;
 
 import java.util.ArrayList;
 
-/**
- * Sistema de murales. Guarda las fichas y los disenadores registrados, crea los
- * murales y precarga las 8 fichas iniciales que pide el obligatorio.
- */
 public class Sistema {
 
     private ArrayList<Ficha> fichas;
@@ -23,10 +19,7 @@ public class Sistema {
         precargarFichas();
     }
 
-    /**
-     * Carga las 8 fichas iniciales del obligatorio.
-     * Los nombres y los disenos son los del enunciado y no pueden reutilizarse.
-     */
+    // Las 8 fichas del enunciado. Sus nombres no se pueden repetir.
     private void precargarFichas() {
         this.fichaVacia = new Ficha("VACIA", Color.porCodigo('B'),
                 ".........",
@@ -71,7 +64,6 @@ public class Sistema {
         return this.disenadores;
     }
 
-    /** Devuelve la ficha con ese nombre, o null si no existe. */
     public Ficha buscarFicha(String nombre) {
         Ficha encontrada = null;
         int i = 0;
@@ -88,12 +80,10 @@ public class Sistema {
         return buscarFicha(nombre) != null;
     }
 
-    /** Registra una ficha nueva. El nombre y el color ya deben estar validados. */
     public void registrarFicha(String nombre, Color color, String disenoChico, String disenoGrande) {
         agregarFicha(new Ficha(nombre, color, disenoChico, disenoGrande));
     }
 
-    /** Devuelve el disenador con ese nombre, o null si no existe. */
     public Disenador buscarDisenador(String nombre) {
         Disenador encontrado = null;
         int i = 0;
@@ -110,12 +100,10 @@ public class Sistema {
         return buscarDisenador(nombre) != null;
     }
 
-    /** Registra un disenador nuevo. El nombre ya debe estar validado como unico. */
     public void registrarDisenador(String nombre, String direccion, String mail) {
         this.disenadores.add(new Disenador(nombre, direccion, mail));
     }
 
-    /** Devuelve todos los murales del sistema, recorriendo los disenadores en orden. */
     public ArrayList<Mural> getMurales() {
         ArrayList<Mural> murales = new ArrayList<Mural>();
         int i = 0;
@@ -126,7 +114,6 @@ public class Sistema {
         return murales;
     }
 
-    /** Devuelve el mural con ese nombre, o null si no existe. */
     public Mural buscarMural(String nombre) {
         Mural encontrado = null;
         ArrayList<Mural> murales = getMurales();
@@ -144,7 +131,6 @@ public class Sistema {
         return buscarMural(nombre) != null;
     }
 
-    /** Crea un mural del disenador indicado y lo agrega a su lista de murales. */
     public Mural crearMural(Disenador disenador, String nombre, char formato, Ficha fichaUno, Ficha fichaDos) {
         Mural mural = new Mural(nombre, formato, fichaUno, fichaDos, this.fichaVacia);
         disenador.agregarMural(mural);

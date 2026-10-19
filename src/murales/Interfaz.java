@@ -9,21 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
-/**
- * Interfaz por consola del sistema de murales: el menu principal, el submenu de
- * modificacion, la lectura y validacion de los datos y la visualizacion de las
- * fichas y de los murales en los dos tamanos.
- */
 public class Interfaz {
 
-    /** Autores del obligatorio, que se muestran en la opcion 1. */
     private static final String AUTOR_UNO = "Agustín Roizen - 350021";
     private static final String AUTOR_DOS = "Juan Francisco Tarigo - 391925";
 
-    /** Secuencia ANSI que vuelve al color normal de la consola. */
     private static final String FIN_COLOR = "\u001B[0m";
 
-    /** Si se pone en false, la salida no lleva codigos de color. */
     private static final boolean USAR_COLOR = true;
 
     private Sistema sistema;
@@ -34,7 +26,6 @@ public class Interfaz {
         this.entrada = new Scanner(System.in);
     }
 
-    /** Muestra el menu principal hasta que se elige la opcion de terminar. */
     public void ejecutar() {
         int opcion = -1;
         while (opcion != 0) {
@@ -62,48 +53,33 @@ public class Interfaz {
     }
 
     private void ejecutarOpcion(int opcion) {
-        switch (opcion) {
-            case 1:
-                mostrarAutores();
-                break;
-            case 2:
-                registrarDisenador();
-                break;
-            case 3:
-                registrarFicha();
-                break;
-            case 4:
-                crearMural();
-                break;
-            case 5:
-                modificarMural();
-                break;
-            case 6:
-                visualizarMural();
-                break;
-            case 7:
-                listarDisenadores();
-                break;
-            case 8:
-                compararMurales();
-                break;
-            case 9:
-                visualizarFichas();
-                break;
-            default:
-                // La opcion 0 termina el programa y no hace nada mas.
-                break;
+        if (opcion == 1) {
+            mostrarAutores();
+        } else if (opcion == 2) {
+            registrarDisenador();
+        } else if (opcion == 3) {
+            registrarFicha();
+        } else if (opcion == 4) {
+            crearMural();
+        } else if (opcion == 5) {
+            modificarMural();
+        } else if (opcion == 6) {
+            visualizarMural();
+        } else if (opcion == 7) {
+            listarDisenadores();
+        } else if (opcion == 8) {
+            compararMurales();
+        } else if (opcion == 9) {
+            visualizarFichas();
         }
     }
 
-    /** Opcion 1: muestra el nombre y el numero de estudiante de los autores. */
     private void mostrarAutores() {
         System.out.println("Autores del obligatorio:");
         System.out.println(AUTOR_UNO);
         System.out.println(AUTOR_DOS);
     }
 
-    /** Opcion 2: registra un disenador con nombre unico, direccion y mail. */
     private void registrarDisenador() {
         System.out.println("--- Registrar diseñador ---");
         String nombre = leerNombreDisenador();
@@ -113,7 +89,6 @@ public class Interfaz {
         System.out.println("Diseñador registrado: " + nombre);
     }
 
-    /** Opcion 3: registra una ficha con nombre unico, color y los dos disenos. */
     private void registrarFicha() {
         System.out.println("--- Registrar ficha ---");
         String nombre = leerNombreFicha();
@@ -124,7 +99,6 @@ public class Interfaz {
         System.out.println("Ficha registrada: " + nombre);
     }
 
-    /** Opcion 4: crea un mural de un disenador con el formato elegido. */
     private void crearMural() {
         System.out.println("--- Creación de mural ---");
         Disenador disenador = elegirDisenador();
@@ -136,8 +110,8 @@ public class Interfaz {
             Mural mural = this.sistema.crearMural(disenador, nombre, formato, fichaUno, fichaDos);
             if (formato == Mural.MANUAL) {
                 agregarFichasManual(mural, fichaUno, fichaDos);
+                mural.guardarOriginal();
             }
-            mural.guardarOriginal();
             System.out.println("Mural creado por " + disenador.getNombre() + " con formato "
                     + Mural.nombreFormato(formato) + ".");
             mostrarMural(mural, true);
@@ -145,7 +119,6 @@ public class Interfaz {
         }
     }
 
-    /** Opcion 5: submenu con las modificaciones posibles sobre un mural. */
     private void modificarMural() {
         System.out.println("--- Modificar mural ---");
         Mural mural = elegirMural();
@@ -206,7 +179,6 @@ public class Interfaz {
         mostrarMural(mural, false);
     }
 
-    /** Opcion 6: muestra un mural y alterna el tamano con ENTER hasta que se ingresa S. */
     private void visualizarMural() {
         System.out.println("--- Visualizar mural ---");
         Disenador disenador = elegirDisenador();
@@ -235,7 +207,6 @@ public class Interfaz {
         }
     }
 
-    /** Opcion 7: lista los disenadores ordenados alfabeticamente con todos sus datos. */
     private void listarDisenadores() {
         System.out.println("--- Listado de diseñadores ---");
         ArrayList<Disenador> ordenados = new ArrayList<Disenador>(this.sistema.getDisenadores());
@@ -266,10 +237,7 @@ public class Interfaz {
         }
     }
 
-    /**
-     * Opcion 8: busca un area rectangular de un mural dentro de los demas murales.
-     * No se busca dentro del propio mural original, solo en los otros.
-     */
+    // No se busca en el propio mural, solo en los demas.
     private void compararMurales() {
         System.out.println("--- Comparar similitud de murales ---");
         Mural original = elegirMural();
@@ -302,7 +270,6 @@ public class Interfaz {
         }
     }
 
-    /** Opcion 9: muestra todas las fichas registradas con sus dos disenos. */
     private void visualizarFichas() {
         System.out.println("--- Visualizar todas las fichas ---");
         ArrayList<Ficha> fichas = this.sistema.getFichas();
@@ -313,7 +280,6 @@ public class Interfaz {
         }
     }
 
-    /** Muestra una ficha con el formato pedido en el obligatorio. */
     private void mostrarFicha(Ficha ficha) {
         System.out.println();
         System.out.println("Ficha: " + ficha.getNombre());
@@ -324,7 +290,6 @@ public class Interfaz {
         mostrarDiseno(ficha, true);
     }
 
-    /** Muestra el diseno de una ficha, en color, con el tamano indicado. */
     private void mostrarDiseno(Ficha ficha, boolean grande) {
         int lado = ladoDe(grande);
         int fila = 0;
@@ -341,11 +306,7 @@ public class Interfaz {
         }
     }
 
-    /**
-     * Muestra un mural completo en el tamano indicado.
-     * Cada ficha ocupa 3x3 o 5x5 posiciones de la salida, asi que cada fila del
-     * mural se imprime en varias lineas de caracteres.
-     */
+    // Cada ficha ocupa lado x lado y cada fila del mural se imprime en lado lineas.
     private void mostrarMural(Mural mural, boolean grande) {
         System.out.println();
         System.out.println("Mural: " + mural.getNombre() + " (formato " + Mural.nombreFormato(mural.getFormato())
@@ -375,7 +336,6 @@ public class Interfaz {
         }
     }
 
-    /** Devuelve el caracter de una posicion de la ficha, en el tamano indicado. */
     private char caracterDe(Ficha ficha, int fila, int columna, boolean grande) {
         char caracter;
         if (grande) {
@@ -406,7 +366,7 @@ public class Interfaz {
         return nombre;
     }
 
-    /** Devuelve el codigo ANSI del color, o texto vacio si el color esta desactivado. */
+    // El enunciado pide color y la consola no tiene otra forma; USAR_COLOR los apaga.
     private String codigoAnsi(Color color) {
         String codigo = "";
         if (USAR_COLOR) {
@@ -438,7 +398,6 @@ public class Interfaz {
         return codigo;
     }
 
-    /** Muestra los disenadores registrados, numerados, para poder elegir uno. */
     private Disenador elegirDisenador() {
         Disenador elegido = null;
         ArrayList<Disenador> disenadores = this.sistema.getDisenadores();
@@ -456,7 +415,6 @@ public class Interfaz {
         return elegido;
     }
 
-    /** Muestra todos los murales con su disenador, numerados, para poder elegir uno. */
     private Mural elegirMural() {
         Mural elegido = null;
         ArrayList<Mural> murales = this.sistema.getMurales();
@@ -482,7 +440,6 @@ public class Interfaz {
         return elegido;
     }
 
-    /** Muestra los murales de un disenador, numerados, para poder elegir uno. */
     private Mural elegirMuralDe(Disenador disenador) {
         ArrayList<Mural> murales = disenador.getMurales();
         int i = 0;
@@ -494,7 +451,6 @@ public class Interfaz {
         return murales.get(numero - 1);
     }
 
-    /** Muestra todas las fichas registradas, numeradas, y devuelve la elegida. */
     private Ficha elegirFicha(String titulo) {
         ArrayList<Ficha> fichas = this.sistema.getFichas();
         System.out.println(titulo + ":");
@@ -503,7 +459,6 @@ public class Interfaz {
         return fichas.get(numero - 1);
     }
 
-    /** Igual que elegirFicha, pero la ficha elegida debe ser distinta de la recibida. */
     private Ficha elegirFichaDistinta(String titulo, Ficha otra) {
         Ficha elegida = elegirFicha(titulo);
         while (elegida.equals(otra)) {
@@ -522,10 +477,6 @@ public class Interfaz {
         }
     }
 
-    /**
-     * Formato manual: agrega fichas en las posiciones que indica el usuario,
-     * mientras responda que si a la pregunta de seguir agregando.
-     */
     private void agregarFichasManual(Mural mural, Ficha fichaUno, Ficha fichaDos) {
         System.out.println("Mural manual: el mural empieza vacío.");
         boolean seguir = true;
@@ -598,7 +549,6 @@ public class Interfaz {
         return texto.equals("G");
     }
 
-    /** Lee un diseno y repite el pedido hasta que tenga el largo exacto. */
     private String leerDiseno(int largo) {
         System.out.println("Ingrese el diseño de " + largo + " caracteres (el punto es un espacio en blanco):");
         String diseno = this.entrada.nextLine();
@@ -610,7 +560,7 @@ public class Interfaz {
         return diseno;
     }
 
-    /** Lee un numero entero, repitiendo el pedido mientras no sea un numero valido. */
+    // Se lee la linea entera porque nextInt deja el Enter pendiente para el nextLine siguiente.
     private int leerEntero(String mensaje) {
         int numero = 0;
         boolean valido = false;
@@ -627,7 +577,6 @@ public class Interfaz {
         return numero;
     }
 
-    /** Lee un numero entero dentro del rango indicado, con los dos extremos incluidos. */
     private int leerEnteroEnRango(String mensaje, int minimo, int maximo) {
         int numero = leerEntero(mensaje);
         while (numero < minimo || numero > maximo) {
@@ -637,13 +586,11 @@ public class Interfaz {
         return numero;
     }
 
-    /** Lee un texto, que puede quedar vacio. */
     private String leerTexto(String mensaje) {
         System.out.print(mensaje);
         return this.entrada.nextLine().trim();
     }
 
-    /** Lee un texto, repitiendo el pedido mientras quede vacio. */
     private String leerTextoNoVacio(String mensaje) {
         String texto = leerTexto(mensaje);
         while (texto.isEmpty()) {
@@ -653,7 +600,6 @@ public class Interfaz {
         return texto;
     }
 
-    /** Lee S o N y devuelve true cuando la respuesta es S. */
     private boolean leerSiNo(String mensaje) {
         String texto = leerTexto(mensaje).toUpperCase();
         while (!texto.equals("S") && !texto.equals("N")) {

@@ -6,40 +6,23 @@
 package murales;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 
-/**
- * Mural de 10 filas por 12 columnas. Cada posicion tiene una ficha. Guarda ademas
- * una copia del estado con el que fue creado, para poder restaurarlo despues.
- */
 public class Mural {
 
     public static final int FILAS = 10;
     public static final int COLUMNAS = 12;
 
-    /** Formato damero: las dos fichas alternan como un tablero de ajedrez. */
     public static final char DAMERO = 'D';
-    /** Formato random: cantidad y posiciones al azar. */
     public static final char RANDOM = 'R';
-    /** Formato alternado por filas: cada fila entera con la misma ficha. */
     public static final char ALTERNADO = 'F';
-    /** Formato borde exterior: el borde con la primera ficha y el resto con la segunda. */
     public static final char BORDE = 'B';
-    /** Formato manual: se empieza vacio y el usuario agrega las fichas. */
     public static final char MANUAL = 'M';
-
-    private static final Random AZAR = new Random();
 
     private String nombre;
     private char formato;
     private Ficha[][] matriz;
     private Ficha[][] original;
 
-    /**
-     * Crea el mural con el formato indicado, usando las dos fichas elegidas.
-     * El formato manual deja el mural vacio: las fichas se agregan despues.
-     */
     public Mural(String nombre, char formato, Ficha fichaUno, Ficha fichaDos, Ficha fichaVacia) {
         this.nombre = nombre;
         this.formato = formato;
@@ -77,12 +60,10 @@ public class Mural {
         this.matriz[fila][columna] = ficha;
     }
 
-    /** Lista de codigos de formato validos, para mostrar en los mensajes. */
     public static String formatosValidos() {
         return "" + DAMERO + RANDOM + ALTERNADO + BORDE + MANUAL;
     }
 
-    /** Nombre del formato, para mostrar en los mensajes. */
     public static String nombreFormato(char formato) {
         String nombre = "desconocido";
         if (formato == DAMERO) {
@@ -123,32 +104,26 @@ public class Mural {
         }
     }
 
-    /**
-     * Reparte las dos fichas al azar: primero se sortea cuantas posiciones quedan
-     * ocupadas, despues cuantas de esas son de la primera ficha, y por ultimo se
-     * eligen esas posiciones al azar sobre un listado mezclado.
-     */
+    // Se sortean la cantidad total, la cantidad de la primera ficha y las posiciones.
     private void armarRandom(Ficha fichaUno, Ficha fichaDos) {
-        ArrayList<Integer> posiciones = new ArrayList<Integer>();
-        for (int i = 0; i < FILAS * COLUMNAS; i++) {
-            posiciones.add(i);
-        }
-        Collections.shuffle(posiciones);
-        int cantidad = AZAR.nextInt(FILAS * COLUMNAS + 1);
-        int cantidadUno = AZAR.nextInt(cantidad + 1);
-        int cantidadDos = cantidad - cantidadUno;
-        int i = 0;
-        while (i < cantidadUno) {
-            ponerFicha(posiciones.get(i), fichaUno);
-            i++;
-        }
-        while (i < cantidadUno + cantidadDos) {
-            ponerFicha(posiciones.get(i), fichaDos);
-            i++;
+        int cantidad = (int) (Math.random() * (FILAS * COLUMNAS + 1));
+        int cantidadUno = (int) (Math.random() * (cantidad + 1));
+        boolean[] usadas = new boolean[FILAS * COLUMNAS];
+        int puestas = 0;
+        while (puestas < cantidad) {
+            int posicion = (int) (Math.random() * (FILAS * COLUMNAS));
+            if (!usadas[posicion]) {
+                usadas[posicion] = true;
+                if (puestas < cantidadUno) {
+                    ponerFicha(posicion, fichaUno);
+                } else {
+                    ponerFicha(posicion, fichaDos);
+                }
+                puestas++;
+            }
         }
     }
 
-    /** Pone una ficha en la posicion recibida, contando las celdas por fila. */
     private void ponerFicha(int posicion, Ficha ficha) {
         int fila = posicion / COLUMNAS;
         int columna = posicion % COLUMNAS;
@@ -183,11 +158,7 @@ public class Mural {
         return fila == 0 || fila == FILAS - 1 || columna == 0 || columna == COLUMNAS - 1;
     }
 
-    /**
-     * Copia el estado actual del mural como estado original.
-     * Se copia celda por celda: asignar la matriz entera dejaria las dos variables
-     * apuntando a la misma matriz y el original se perderia con cada cambio.
-     */
+    // Se copia celda por celda: asignar la matriz dejaria las dos variables apuntando al mismo arreglo.
     public void guardarOriginal() {
         for (int fila = 0; fila < FILAS; fila++) {
             for (int columna = 0; columna < COLUMNAS; columna++) {
@@ -196,7 +167,6 @@ public class Mural {
         }
     }
 
-    /** Vuelve el mural al estado que tenia cuando se creo. */
     public void restaurar() {
         for (int fila = 0; fila < FILAS; fila++) {
             for (int columna = 0; columna < COLUMNAS; columna++) {
@@ -205,7 +175,6 @@ public class Mural {
         }
     }
 
-    /** Sustituye todas las apariciones de una ficha del mural por otra ficha. */
     public void reemplazarFicha(Ficha vieja, Ficha nueva) {
         for (int fila = 0; fila < FILAS; fila++) {
             for (int columna = 0; columna < COLUMNAS; columna++) {
@@ -216,7 +185,6 @@ public class Mural {
         }
     }
 
-    /** Fichas diferentes que aparecen en el mural. */
     public ArrayList<Ficha> getFichasDiferentes() {
         ArrayList<Ficha> fichas = new ArrayList<Ficha>();
         for (int fila = 0; fila < FILAS; fila++) {
@@ -229,7 +197,6 @@ public class Mural {
         return fichas;
     }
 
-    /** Colores diferentes que aparecen en el mural. */
     public ArrayList<Color> getColoresDiferentes() {
         ArrayList<Color> colores = new ArrayList<Color>();
         ArrayList<Ficha> fichas = getFichasDiferentes();
@@ -243,10 +210,7 @@ public class Mural {
         return colores;
     }
 
-    /**
-     * Devuelve el area rectangular que empieza en la fila y columna recibidas.
-     * Las filas y columnas se cuentan desde cero.
-     */
+    // Fila y columna se cuentan desde cero.
     public Ficha[][] getArea(int fila, int columna, int cantidadFilas, int cantidadColumnas) {
         Ficha[][] area = new Ficha[cantidadFilas][cantidadColumnas];
         for (int f = 0; f < cantidadFilas; f++) {
@@ -257,10 +221,7 @@ public class Mural {
         return area;
     }
 
-    /**
-     * Busca un area dentro del mural.
-     * Devuelve la fila y la columna de la primera aparicion, o null si no aparece.
-     */
+    // Devuelve la primera aparicion, o null si no aparece.
     public int[] buscarArea(Ficha[][] area) {
         int cantidadFilas = area.length;
         int cantidadColumnas = area[0].length;
@@ -279,7 +240,6 @@ public class Mural {
         return encontrada;
     }
 
-    /** Devuelve true si el area coincide con el mural en la fila y columna recibidas. */
     private boolean coincideArea(Ficha[][] area, int fila, int columna) {
         boolean coincide = true;
         for (int f = 0; f < area.length && coincide; f++) {
@@ -292,6 +252,7 @@ public class Mural {
         return coincide;
     }
 
+    @Override
     public String toString() {
         return this.nombre;
     }
